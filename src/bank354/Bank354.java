@@ -8,14 +8,21 @@ package bank354;
 import bank354.util.Bank;
 import bank354.util.BankUtility;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -24,51 +31,106 @@ import javafx.stage.Stage;
  * @author gshenoy
  */
 public class Bank354 extends Application {
-
+    
     @Override
     public void start(Stage primaryStage) {
-
-        Label depositLabel = new Label("Your deposit is: " + Bank.get().getDeposit().toString());
+        
+        Label depositLabel = new Label("A/C Balance " + Bank.get().getDeposit().toString());
+        depositLabel.getStyleClass().add("deposit");
         Label amountLabel = new Label("Enter amount");
         final TextField amountTextField = new TextField();
         amountTextField.setMaxWidth(100);
-
+        
         Button btn = new Button();
         btn.setText("Deposit");
+        btn.getStyleClass().add("myButtons");
         btn.setOnAction(new EventHandler<ActionEvent>() {
-
+            
             @Override
             public void handle(ActionEvent event) {
-                BankUtility.deposit(Long.parseLong(amountTextField.getText()));
-                depositLabel.setText("Your deposit is: " + Bank.get().getDeposit().toString());
+                BankUtility.deposit(Double.parseDouble(amountTextField.getText()));
+                depositLabel.setText("A/C Balance " + Bank.get().getDeposit().toString());
             }
         });
-
+        
         Button withdraw = new Button();
         withdraw.setText("Withdraw");
         withdraw.setOnAction(new EventHandler<ActionEvent>() {
-
+            
             @Override
             public void handle(ActionEvent event) {
-                BankUtility.withdraw(Long.parseLong(amountTextField.getText()));
+                BankUtility.withdraw(Double.parseDouble(amountTextField.getText()));
                 depositLabel.setText("Your deposit is: " + Bank.get().getDeposit().toString());
             }
         });
-
+        
+        Button interestBtn = new Button();
+        interestBtn.setText("10.8% ROI");
+        interestBtn.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                BankUtility.roi();
+                depositLabel.setText("Your deposit is: " + Bank.get().getDeposit().toString());
+            }
+        });
+        
         VBox root = new VBox();
-               
+        
         root.getChildren().add(depositLabel);
-        root.getChildren().add(amountLabel);
-        root.getChildren().add(amountTextField);
+        
+        HBox hBox1 = new HBox();
+        hBox1.getChildren().add(amountLabel);
+        hBox1.getChildren().add(amountTextField);
+        hBox1.setSpacing(5);
+        
+        root.getChildren().add(hBox1);
         
         HBox hBox = new HBox();
         hBox.getChildren().add(btn);
         hBox.getChildren().add(withdraw);
+        hBox.getChildren().add(interestBtn);
+        hBox.setSpacing(5);
         
         root.getChildren().add(hBox);
-
+        
+        root.getChildren().add(new Separator());
+        
+        Label currenciesLabel = new Label("Currency");
+        final Label showConvertedDeposit = new Label();
+        ObservableList<String> allCurrencies = FXCollections.observableArrayList();
+        allCurrencies.add("EUR");
+        allCurrencies.add("USD");
+        allCurrencies.add("INR");
+        
+        final ComboBox<String> currenciesCombo = new ComboBox<>(allCurrencies);
+        currenciesCombo.setValue("EUR");
+        
+        Button showInNewCurrency = new Button("Convert");
+        showInNewCurrency.setOnAction(new EventHandler<ActionEvent>() {
+            
+            @Override
+            public void handle(ActionEvent event) {
+                showConvertedDeposit.setText("Conversion: " + BankUtility.toCurrency(currenciesCombo.getValue()));
+            }
+        });
+        
+        HBox hBox2 = new HBox();
+        hBox2.getChildren().add(currenciesLabel);
+        hBox2.getChildren().add(currenciesCombo);
+        hBox2.getChildren().add(showInNewCurrency);
+        hBox2.setSpacing(5);
+        hBox2.setAlignment(Pos.BOTTOM_LEFT);
+        
+        root.getChildren().add(hBox2);
+        root.getChildren().add(showConvertedDeposit);
+        
+        root.setSpacing(10);
+        root.setPadding(new Insets(10, 10, 10, 10));
+        
         Scene scene = new Scene(root, 500, 500);
-
+        scene.getStylesheets().add("bank354/myStyle.css");
+        
         primaryStage.setTitle("Bank 354");
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -80,5 +142,5 @@ public class Bank354 extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
+    
 }

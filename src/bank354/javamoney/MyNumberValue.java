@@ -12,42 +12,42 @@ import javax.money.NumberValue;
  *
  * @author gshenoy
  */
-public class DefaultNumberValue extends NumberValue {
+public class MyNumberValue extends NumberValue {
 
-    private final Number number;
+    private Double number;
 
-    public DefaultNumberValue(Number number) {
-        this.number = number;
+    public MyNumberValue(Double d) {
+        this.number = d;
     }
 
     @Override
     public Class<?> getNumberType() {
-        return this.number.getClass();
+        return number.getClass();
     }
 
     @Override
     public int getPrecision() {
-        return BigDecimal.valueOf(number.longValue()).precision();
+        return BigDecimal.valueOf(number).precision();
     }
 
     @Override
     public int getScale() {
-        return BigDecimal.valueOf(number.longValue()).scale();
+        return BigDecimal.valueOf(number).scale();
     }
 
     @Override
     public int intValueExact() {
-        return numberValue(Double.class).intValue();
+        return BigDecimal.valueOf(number).intValueExact();
     }
 
     @Override
     public long longValueExact() {
-        return numberValue(Double.class).longValue();
+        return BigDecimal.valueOf(number).longValueExact();
     }
 
     @Override
     public double doubleValueExact() {
-        return numberValue(Double.class).doubleValue();
+        return BigDecimal.valueOf(number).doubleValue();
     }
 
     @Override
@@ -72,22 +72,22 @@ public class DefaultNumberValue extends NumberValue {
 
     @Override
     public int intValue() {
-        return numberValue(Double.class).intValue();
+        return BigDecimal.valueOf(number).intValue();
     }
 
     @Override
     public long longValue() {
-        return numberValue(Double.class).longValue();
+        return BigDecimal.valueOf(number).longValue();
     }
 
     @Override
     public float floatValue() {
-        return numberValue(Double.class).floatValue();
+        return BigDecimal.valueOf(number).floatValue();
     }
 
     @Override
     public double doubleValue() {
-        return numberValue(Double.class).doubleValue();
+        return BigDecimal.valueOf(number).doubleValue();
     }
 
 }

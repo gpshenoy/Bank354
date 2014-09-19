@@ -15,13 +15,13 @@ import javax.money.MonetaryAmount;
  */
 public class Bank {
 
-    public static MyCurrencyUnit DEFAULT_CURRENCY = new MyCurrencyUnit(MyCurrencyUnit._USD, MyCurrencyUnit.USD, 2);
+    public static MyCurrencyUnit DEFAULT_CURRENCY = new MyCurrencyUnit(MyCurrencyUnit._EUR, MyCurrencyUnit.EUR, 2);
 
     private static Bank instance;
     private MonetaryAmount deposit;
 
     private Bank() {
-        deposit = MyMoneyImpl.of(0L, DEFAULT_CURRENCY);
+        deposit = MyMoneyImpl.of(0.0, DEFAULT_CURRENCY);
     }
 
     public static Bank get() {

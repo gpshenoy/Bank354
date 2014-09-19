@@ -14,8 +14,10 @@ import javax.money.CurrencyUnit;
  */
 public class MyCurrencyUnit implements CurrencyUnit, Comparable<CurrencyUnit> {
 
+    public static final String _INR = "INR";
     public static final String _USD = "USD";
     public static final String _EUR = "EUR";
+    public static final Integer INR = 0;
     public static final Integer USD = 840;
     public static final Integer EUR = 978;
 

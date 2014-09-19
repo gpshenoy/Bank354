@@ -14,6 +14,7 @@ import javax.money.MonetaryAmount;
 import javax.money.MonetaryAmountFactory;
 import javax.money.MonetaryContext;
 import javax.money.MonetaryContextBuilder;
+import javax.money.MonetaryCurrencies;
 import javax.money.NumberValue;
 
 /**
@@ -24,26 +25,29 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
 
     public static final MonetaryContext DEFAULT_MONETARY_CONEXT = MonetaryContextBuilder.of(MyMoneyImpl.class).set(RoundingMode.HALF_UP).build();
 
+    public static final MyMoneyImpl MAX_VALUE = new MyMoneyImpl(Double.MAX_VALUE, MonetaryCurrencies.getCurrency("XXX"));
+    public static final MyMoneyImpl MIN_VALUE = new MyMoneyImpl(Double.MIN_VALUE, MonetaryCurrencies.getCurrency("XXX"));
+
     private final CurrencyUnit currency;
     private final MonetaryContext monetaryContext;
-    private Long number;
+    private Double number;
     private transient NumberValue numberValue;
 
-    private MyMoneyImpl(Long number, CurrencyUnit currency) {
+    private MyMoneyImpl(Double number, CurrencyUnit currency) {
         this(number, currency, DEFAULT_MONETARY_CONEXT);
     }
 
-    private MyMoneyImpl(Long number, CurrencyUnit currency, MonetaryContext monetaryContext) {
+    private MyMoneyImpl(Double number, CurrencyUnit currency, MonetaryContext monetaryContext) {
         this.currency = currency;
         this.number = number;
         this.monetaryContext = monetaryContext;
     }
 
-    public static MyMoneyImpl of(Long number, CurrencyUnit currency, MonetaryContext monetaryContext) {
+    public static MyMoneyImpl of(Double number, CurrencyUnit currency, MonetaryContext monetaryContext) {
         return new MyMoneyImpl(number, currency, monetaryContext);
     }
 
-    public static MyMoneyImpl of(Long number, CurrencyUnit currency) {
+    public static MyMoneyImpl of(Double number, CurrencyUnit currency) {
         return new MyMoneyImpl(number, currency);
     }
 
@@ -51,7 +55,7 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
         if (amt.getClass() == MyMoneyImpl.class) {
             return (MyMoneyImpl) amt;
         }
-        return MyMoneyImpl.of(amt.getNumber().numberValue(Long.class), amt.getCurrency(), amt.getMonetaryContext());
+        return MyMoneyImpl.of(amt.getNumber().numberValue(Double.class), amt.getCurrency(), amt.getMonetaryContext());
     }
 
     @Override
@@ -74,37 +78,37 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
 
     @Override
     public MonetaryAmountFactory<? extends MonetaryAmount> getFactory() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new MyMoneyImplFactory().setAmount(this);
     }
 
     @Override
     public boolean isGreaterThan(MonetaryAmount ma) {
-        return number.compareTo(ma.getNumber().numberValue(Long.class)) > 0;
+        return number.compareTo(ma.getNumber().numberValue(Double.class)) > 0;
     }
 
     @Override
     public boolean isGreaterThanOrEqualTo(MonetaryAmount ma) {
-        return number.compareTo(ma.getNumber().numberValue(Long.class)) > 0;
+        return number.compareTo(ma.getNumber().numberValue(Double.class)) > 0;
     }
 
     @Override
     public boolean isLessThan(MonetaryAmount ma) {
-        return number.compareTo(ma.getNumber().numberValue(Long.class)) < 0;
+        return number.compareTo(ma.getNumber().numberValue(Double.class)) < 0;
     }
 
     @Override
     public boolean isLessThanOrEqualTo(MonetaryAmount ma) {
-        return number.compareTo(ma.getNumber().numberValue(Long.class)) <= 0;
+        return number.compareTo(ma.getNumber().numberValue(Double.class)) <= 0;
     }
 
     @Override
     public boolean isEqualTo(MonetaryAmount ma) {
-        return number.compareTo(ma.getNumber().numberValue(Long.class)) == 0;
+        return number.compareTo(ma.getNumber().numberValue(Double.class)) == 0;
     }
 
     @Override
     public int signum() {
-        return Long.signum(number);
+        return BigDecimal.valueOf(number).signum();
     }
 
     @Override
@@ -112,7 +116,7 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
         if (ma.isZero()) {
             return this;
         }
-        return new MyMoneyImpl(this.number + ma.getNumber().numberValue(Long.class), getCurrency());
+        return new MyMoneyImpl(this.number + ma.getNumber().numberValue(Double.class), getCurrency());
     }
 
     @Override
@@ -120,7 +124,7 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
         if (ma.isZero()) {
             return this;
         }
-        return new MyMoneyImpl(this.number - ma.getNumber().numberValue(Long.class), getCurrency());
+        return new MyMoneyImpl(this.number - ma.getNumber().numberValue(Double.class), getCurrency());
     }
 
     @Override
@@ -138,12 +142,12 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
         if (multiplicand.equals(1)) {
             return this;
         }
-        return new MyMoneyImpl(number * multiplicand.longValue(), getCurrency());
+        return new MyMoneyImpl(number * multiplicand.doubleValue(), getCurrency());
     }
 
     @Override
     public MonetaryAmount divide(long l) {
-        return divide(Long.valueOf(l));
+        return divide(Double.valueOf(l));
     }
 
     @Override
@@ -156,12 +160,12 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
         if (divisor.equals(1)) {
             return this;
         }
-        return new MyMoneyImpl(number / divisor.longValue(), getCurrency());
+        return new MyMoneyImpl(number / divisor.doubleValue(), getCurrency());
     }
 
     @Override
     public MonetaryAmount remainder(long l) {
-        return remainder(Long.valueOf(l));
+        return remainder(Double.valueOf(l));
     }
 
     @Override
@@ -171,12 +175,12 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
 
     @Override
     public MonetaryAmount remainder(Number number) {
-        return new MyMoneyImpl(this.number % number.longValue(), getCurrency());
+        return new MyMoneyImpl(this.number % number.doubleValue(), getCurrency());
     }
 
     @Override
     public MonetaryAmount[] divideAndRemainder(long l) {
-        return divideAndRemainder(Long.valueOf(l));
+        return divideAndRemainder(Double.valueOf(l));
     }
 
     @Override
@@ -191,7 +195,7 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
 
     @Override
     public MonetaryAmount divideToIntegralValue(long l) {
-        return divideToIntegralValue(Long.valueOf(l));
+        return divideToIntegralValue(Double.valueOf(l));
     }
 
     @Override
@@ -201,14 +205,14 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
 
     @Override
     public MonetaryAmount divideToIntegralValue(Number number) {
-        BigDecimal divisor = new BigDecimal(number.longValue());
+        BigDecimal divisor = new BigDecimal(number.doubleValue());
         BigDecimal dec = BigDecimal.valueOf(this.number).divideToIntegralValue(divisor);
-        return new MyMoneyImpl(dec.longValue(), getCurrency());
+        return new MyMoneyImpl(dec.doubleValue(), getCurrency());
     }
 
     @Override
     public MonetaryAmount scaleByPowerOfTen(int i) {
-        return new MyMoneyImpl(BigDecimal.valueOf(this.number).scaleByPowerOfTen(i).longValue(), getCurrency());
+        return new MyMoneyImpl(BigDecimal.valueOf(this.number).scaleByPowerOfTen(i).doubleValue(), getCurrency());
     }
 
     @Override
@@ -232,9 +236,9 @@ public class MyMoneyImpl implements MonetaryAmount, Comparable<MonetaryAmount>, 
     @Override
     public MonetaryAmount stripTrailingZeros() {
         if (isZero()) {
-            return new MyMoneyImpl(0l, getCurrency());
+            return new MyMoneyImpl(0d, getCurrency());
         }
-        return new MyMoneyImpl(BigDecimal.valueOf(this.number).stripTrailingZeros().longValue(), getCurrency());
+        return new MyMoneyImpl(BigDecimal.valueOf(this.number).stripTrailingZeros().doubleValue(), getCurrency());
     }
 
     @Override
