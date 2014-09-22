@@ -5,7 +5,6 @@
  */
 package bank354.javamoney;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -20,7 +19,7 @@ import javax.money.spi.CurrencyProviderSpi;
  */
 public class MyCurrencyUnitProvider implements CurrencyProviderSpi {
 
-    Map<String, CurrencyUnit> codes = new HashMap<>();
+    static Map<String, CurrencyUnit> codes = new HashMap<>();
 
     public MyCurrencyUnitProvider() {
 
@@ -37,6 +36,10 @@ public class MyCurrencyUnitProvider implements CurrencyProviderSpi {
             set.add(codes.get(code));
         }
         return set;
+    }
+
+    public static void addNewCode(String code) {
+        codes.put(code, new MyCurrencyUnit(code, 0, 2));
     }
 
 }

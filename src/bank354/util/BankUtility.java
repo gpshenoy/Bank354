@@ -5,6 +5,7 @@
  */
 package bank354.util;
 
+import bank354.javamoney.MyCurrencyUnitProvider;
 import bank354.javamoney.MyExchangeRateProvider;
 import bank354.javamoney.MyMoneyImpl;
 import javax.money.MonetaryAmount;
@@ -34,6 +35,11 @@ public class BankUtility {
         ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
         ExchangeRate rate = provider.getExchangeRate("EUR", code);
         return Bank.get().getDeposit().multiply(rate.getFactor()).getFactory().setCurrency(code).create();
+    }
+
+    public static void addNewCurrency(String code, Double exRate) {
+        MyExchangeRateProvider.get().add(code, exRate);
+        MyCurrencyUnitProvider.addNewCode(code);
     }
 
 }

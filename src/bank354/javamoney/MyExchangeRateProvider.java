@@ -98,4 +98,8 @@ public class MyExchangeRateProvider implements ExchangeRateProvider {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public void add(String code, Double rate) {
+        rateProvider.put(code, rate);
+    }
+
 }
